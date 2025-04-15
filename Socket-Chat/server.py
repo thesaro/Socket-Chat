@@ -101,6 +101,10 @@ class Server:
             return True
         return False
 
+
+    # If you wanna send a pv message to someone
+    # just click on the username in the userlist
+    # then click on Private button!
     def send_private_message(self, sender_conn, room_id, sender_id, target_user, message):
         timestamp = time.strftime("%H:%M:%S")
         private_msg = f"[{timestamp}] [PM from {sender_id}] {message}\n"
