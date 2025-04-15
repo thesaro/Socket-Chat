@@ -8,11 +8,17 @@ def receive_messages(server):
         try:
             message = server.recv(1024).decode()
             if not message:
-                print("Disconnected from server")
+                print("\nDisconnected from server")
                 sys.exit()
-            print(message)
+                
+            if message.startswith("USERLIST:"):
+                pass
+            else:
+                print(f"\n{message}", end='')
+                print("> ", end='', flush=True)
+                
         except Exception as e:
-            print(f"Error receiving message: {str(e)}")
+            print(f"\nError receiving message: {str(e)}")
             server.close()
             sys.exit()
 
@@ -44,29 +50,28 @@ def main():
 
     while True:
         try:
-            message = input("> ").strip()
+            print("> ", end='', flush=True)
+            message = sys.stdin.readline().strip()
         
             if not message:
                 continue
 
             # send message to the server
-            server.send((message + "\n").encode())
-
+            server.send(message.encode())
+            
             if message.lower() == "/exit":
                 print("Disconnecting...")
                 time.sleep(1)
                 server.close()
                 sys.exit()
 
-            print(f"<You> {message}")
-
         except KeyboardInterrupt:
             print("\nDisconnecting...")
-            server.send("/exit\n".encode())
+            server.send("/exit".encode())
             server.close()
             sys.exit()
         except Exception as e:
-            print(f"Error: {str(e)}")
+            print(f"\nError: {str(e)}")
             server.close()
             sys.exit()
 

@@ -88,8 +88,8 @@ class Server:
             self.broadcast(f"{user_id} left the room", connection, room_id, "System")
             return True
         elif message == "/users":
-            users = [conn.getpeername()[0] for conn in self.rooms[room_id]]
-            connection.send(f"Connected users: {', '.join(users)}".encode())
+            users = [self.usernames[conn] for conn in self.rooms[room_id]]
+            connection.send(f"Connected users: {', '.join(users)}\n".encode())
             return True
         elif message.startswith("/pm "):
             parts = message.split(maxsplit=2)
@@ -97,39 +97,44 @@ class Server:
                 _, target_user, private_msg = parts
                 self.send_private_message(connection, room_id, user_id, target_user, private_msg)
             else:
-                connection.send("Usage: /pm [username] [message]".encode())
+                connection.send("Usage: /pm [username] [message]\n".encode())
             return True
         return False
 
     def send_private_message(self, sender_conn, room_id, sender_id, target_user, message):
         timestamp = time.strftime("%H:%M:%S")
-        private_msg = f"[{timestamp}] [PM from {sender_id}] {message}"
-        
+        private_msg = f"[{timestamp}] [PM from {sender_id}] {message}\n"
+        found = False
+    
         for client in self.rooms[room_id]:
             try:
-                if client != sender_conn and client.getpeername()[0] == target_user:
+                if client != sender_conn and self.usernames[client] == target_user:
                     client.send(private_msg.encode())
-                    sender_conn.send(f"[{timestamp}] [PM to {target_user}] {message}".encode())
-                    return
+                    found = True
             except:
                 self.remove_connection(client, room_id, "Unknown")
-        
-        sender_conn.send(f"User {target_user} not found or offline".encode())
+    
+        if found:
+            sender_conn.send(f"[{timestamp}] [PM to {target_user}] {message}\n".encode())
+        else:
+            sender_conn.send(f"User {target_user} not found or offline\n".encode())
 
     def broadcast(self, message, connection, room_id, sender_id):
         timestamp = time.strftime("%H:%M:%S")
-        formatted_msg = f"[{timestamp}] <{sender_id}> {message}"
-    
-        # list of all users in the room
-        user_names = [self.usernames[conn] for conn in self.rooms[room_id]]
-        user_list_msg = f" USERLIST: {','.join(user_names)}"
+        formatted_msg = f"[{timestamp}] <{sender_id}> {message}\n"
     
         for client in self.rooms[room_id]:
             try:
-                # send both the message and user list update
                 if client != connection:
                     client.send(formatted_msg.encode())
-                # always send user list update to everyone
+            except:
+                self.remove_connection(client, room_id, "Unknown")
+    
+        # send user list update separately to avoid mixing with messages
+        user_names = [self.usernames[conn] for conn in self.rooms[room_id]]
+        user_list_msg = f"USERLIST: {','.join(user_names)}\n"
+        for client in self.rooms[room_id]:
+            try:
                 client.send(user_list_msg.encode())
             except:
                 self.remove_connection(client, room_id, "Unknown")
