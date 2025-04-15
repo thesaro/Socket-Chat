@@ -11,7 +11,7 @@ A simple chat application with TLI and GUI clients using Python sockets.
 
 ## Screenshots
 
-| CLI Client | GUI Client | Private Messaging |
+| TLI Messaging | GUI Login | Chat Gui |
 |------------|------------|-------------------|
 | ![TLI](image/tli.png) | ![GUI](image/gui_login.png) | ![PM](image/gui_chat.png) |
 
