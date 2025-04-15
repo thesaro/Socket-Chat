@@ -11,18 +11,17 @@ A simple chat application with TLI and GUI clients using Python sockets.
 
 ## Screenshots
 
-| TLI Messaging | GUI Login | Chat Gui |
+| TLI Messaging | GUI Login | Chat GUI |
 |------------|------------|-------------------|
 | ![TLI](image/tli.png) | ![GUI](image/gui_login.png) | ![PM](image/gui_chat.png) |
 
 ## Quick Start
-
-Start the server:
 ```bash
+1. Start the server:
 python server.py
 
 2. Run clients:
-# CLI version
+# TLI version
 python client.py
 
 # GUI version
