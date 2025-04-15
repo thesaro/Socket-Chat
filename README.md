@@ -30,7 +30,7 @@ python ChatGUI.py
 ## Basic Commands
 Public chat: Just type and press Enter
 
-Private message: /pm username your-message (CLI) *** If you wanna send a pv message to someone just click on the username in the user list then click on Private button
+Private message: /pm username your-message (CLI)   ***    If you wanna send a pv message to someone in GUI chat just click on the username in the user list then click on Private button
 
 Exit: /exit
 
